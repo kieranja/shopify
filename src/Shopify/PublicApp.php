@@ -147,14 +147,22 @@ class PublicApp extends Client {
     return ($original_hmac === $this->calculateHmac($data, $this->shared_secret));
   }
 
-  /**
-   * @param array $scopes
-   * @param string $redirect_uri
-   * @param string $state
-   */
-  public function authorizeUser($redirect_uri, array $scopes, $state) {
+    /**
+     * @param $redirect_uri
+     * @param array $scopes
+     * @param $state
+     * @param bool $auto_redirect If you're using an embedded app, set this to false and use the returned url (break out of iframe and redirect)
+     * @return string
+     */
+  public function authorizeUser($redirect_uri, array $scopes, $state, $auto_redirect = true) {
     $url = $this->formatAuthorizeUrl($this->shop_domain, $this->api_key, $scopes, $redirect_uri, $state);
-    header("Location: $url");
+
+    // Redirect
+    if ($auto_redirect) {
+        header("Location: $url");
+        exit;
+    }
+
     return $url;
   }
 
